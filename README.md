@@ -8,4 +8,10 @@
 - Added a styled **“List your place”** button for logged-in users
 - Username is currently static and will be replaced once the login system is added
 
+### **Footer**
+
+- Added HavenStay footer with brand, quick links, and contact info
+- Integrated lucide icons (Home, Mail, Phone, MapPin)
+- Connected footer to all pages using Layout.jsx
+
 ## **Fatat Mustapha**
