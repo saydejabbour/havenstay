@@ -1,81 +1,47 @@
-// App.jsx
-import { Toaster } from "./components/ui/toaster";
-import { Toaster as Sonner } from "./components/ui/sonner";
-import { TooltipProvider } from "./components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// src/App.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
-import { PropertiesProvider } from "./contexts/PropertiesContext";
-
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
-
-import Home from "./pages/Home";
-import Properties from "./pages/Properties";
-import PropertyDetails from "./pages/PropertyDetails";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import SignUp from "./pages/SignUp";
-import Login from "./pages/Login";
-import ListProperty from "./pages/ListProperty";
-import NotFound from "./pages/NotFound";
-
-const queryClient = new QueryClient();
-
-// ✅ Route guard: only logged-in users can access /list-property
-function ProtectedRoute({ children }) {
-  const { user } = useAuth(); // user comes from AuthContext
-
-  if (!user) {
-    // not logged in → send to login page
-    return <Navigate to="/login" replace />;
-  }
-
-  return children;
-}
+import Home from "./pages/Home.jsx";
+import Properties from "./pages/Properties.jsx";
+import About from "./pages/About.jsx";
+import Contact from "./pages/Contact.jsx";
+import ListProperty from "./pages/ListProperty.jsx";
+import Profile from "./pages/Profile.jsx";
+import Login from "./pages/Login.jsx";
 
 function App() {
+  // ❗ TEMP: fake logged-in state
+  // later we will replace this with AuthContext + real login
+  const isLoggedIn = false;
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <PropertiesProvider>
-              <div className="flex flex-col min-h-screen">
-                <Navbar />
-                <main className="flex-1">
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/properties" element={<Properties />} />
-                    <Route path="/property/:id" element={<PropertyDetails />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/signup" element={<SignUp />} />
-                    <Route path="/login" element={<Login />} />
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <Routes>
+        {/* Public pages */}
+        <Route path="/" element={<Home />} />
+        <Route path="/properties" element={<Properties />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
 
-                    {/* 🔐 Only logged-in users can access this */}
-                    <Route
-                      path="/list-property"
-                      element={
-                        <ProtectedRoute>
-                          <ListProperty />
-                        </ProtectedRoute>
-                      }
-                    />
+        {/* Auth pages */}
+        <Route path="/login" element={<Login />} />
 
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                </main>
-                <Footer />
-              </div>
-            </PropertiesProvider>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+        {/* Protected routes – only when logged in */}
+        <Route
+          path="/list-property"
+          element={
+            isLoggedIn ? <ListProperty /> : <Navigate to="/login" replace />
+          }
+        />
+        <Route
+          path="/profile"
+          element={isLoggedIn ? <Profile /> : <Navigate to="/login" replace />}
+        />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </div>
   );
 }
 
