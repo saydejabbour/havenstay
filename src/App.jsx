@@ -15,7 +15,8 @@ function App() {
   const isLoggedIn = false;
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
+    // make sure the root fills the whole screen and uses a light background
+    <div className="w-full min-h-screen bg-[#f5f0e8] text-slate-900">
       <Routes>
         {/* Public pages */}
         <Route path="/" element={<Home />} />
