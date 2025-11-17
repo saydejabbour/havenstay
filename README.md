@@ -14,4 +14,12 @@
 - Integrated lucide icons (Home, Mail, Phone, MapPin)
 - Connected footer to all pages using Layout.jsx
 
+### **Contact Page**
+
+- Built a clean, responsive HavenStay contact page
+- Added functional email, phone, and location links
+- Implemented form validation + error & success toasts
+- Applied improved color palette and soft UI enhancements
+- Integrated Lucide icons for a polished look
+
 ## **Fatat Mustapha**

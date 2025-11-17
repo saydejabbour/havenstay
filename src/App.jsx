@@ -12,7 +12,7 @@ import ListProperty from "./pages/ListProperty.jsx";
 import Profile from "./pages/Profile.jsx";
 
 function App() {
-  const isLoggedIn = true; // fake for now
+  const isLoggedIn = false; // fake for now
   const username = "sayde jabbour";
 
   return (

@@ -1,5 +1,7 @@
 import { Link, NavLink } from "react-router-dom";
 import { Home, Building2, Info, Mail, Plus, User, LogOut } from "lucide-react";
+import logo from "../images/havenstay-logo.png";
+
 import { useState } from "react";
 
 function Navbar({ isLoggedIn, username }) {
@@ -13,7 +15,12 @@ function Navbar({ isLoggedIn, username }) {
 
         {/* -------- LEFT: LOGO -------- */}
         <Link to="/" className="flex items-center gap-3">
-          <Home className="text-green-900 w-7 h-7" />
+          <img 
+  src={logo} 
+  alt="HavenStay Logo"
+  className="w-10 h-10 rounded-lg object-cover"
+/>
+
           <div>
             <h1 className="text-xl font-semibold text-green-900">HavenStay</h1>
             <p className="text-xs text-gray-600 -mt-1">
