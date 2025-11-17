@@ -1,13 +1,15 @@
 import { Link, NavLink } from "react-router-dom";
 import { Home, Building2, Info, Mail, Plus, User, LogOut } from "lucide-react";
 import logo from "../images/havenstay-logo.png";
-
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
-function Navbar({ isLoggedIn, username }) {
-  const [open, setOpen] = useState(false);
 
-  // NOTE: When we build signup/login, "username" will come from AuthContext instead of props.
+// 🔹 add onLogout here
+function Navbar({ isLoggedIn, username, onLogout }) {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
 
   return (
     <header className="w-full bg-white shadow-sm border-b border-gray-200">
@@ -16,10 +18,10 @@ function Navbar({ isLoggedIn, username }) {
         {/* -------- LEFT: LOGO -------- */}
         <Link to="/" className="flex items-center gap-3">
           <img 
-  src={logo} 
-  alt="HavenStay Logo"
-  className="w-10 h-10 rounded-lg object-cover"
-/>
+            src={logo} 
+            alt="HavenStay Logo"
+            className="w-10 h-10 rounded-lg object-cover"
+          />
 
           <div>
             <h1 className="text-xl font-semibold text-green-900">HavenStay</h1>
@@ -144,16 +146,22 @@ function Navbar({ isLoggedIn, username }) {
                     My Profile
                   </Link>
 
-                  <button
-                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 transition w-full text-left"
-                    onClick={() => {
-                      console.log("Logged out"); // TODO: Replace with real logout later
-                      setOpen(false);
-                    }}
-                  >
-                    <LogOut size={18} />
-                    Log out
-                  </button>
+                 <button
+  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 transition w-full text-left"
+  onClick={() => {
+    console.log("Logged out");
+    setOpen(false);
+
+    if (onLogout) {
+      onLogout();      // clears the user in App.jsx
+    }
+
+    navigate("/");      // 👈 FORCE redirect to home page
+  }}
+>
+  <LogOut size={18} />
+  Log out
+</button>
                 </div>
               )}
             </div>

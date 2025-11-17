@@ -22,9 +22,19 @@
 - Applied improved color palette and soft UI enhancements
 - Integrated Lucide icons for a polished look
 
+### **Authentication System**
+
+- Added login, signup, and reset-password pages with HavenStay styling
+- Implemented a reusable Toast component for global alerts
+- Added “Back to Home” button across all auth pages
+- Enabled persistent login state using localStorage
+- Connected navbar to auth (username, dropdown, protected routes)
+- Fixed logout flow and redirected users to the Home page
+
 ## **Fatat Mustapha**
 
 ### **About page**
+
 - Created a responsive About Page using React + Tailwind.
 - Added hero title + description with HavenStay colors.
 - Implemented clean image/text layout with proper spacing.
