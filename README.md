@@ -39,3 +39,17 @@
 - Added hero title + description with HavenStay colors.
 - Implemented clean image/text layout with proper spacing.
 - Improved readability, structure, and overall UI design.
+
+### **Home Page**
+
+- Built a responsive Home Page using React + Tailwind.
+
+- Added hero section with custom image, gradient, and centered text.
+
+- Created a modern search card with dropdowns + search button.
+
+- Designed a Featured Properties section with clean title + subtitle.
+
+- Added three property cards with local images and hover zoom effect.
+
+- Included price badge, icons, and “View Details” button linking to Properties.

@@ -27,35 +27,25 @@ function Contact() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Simple validation
-    if (!form.name.trim()) {
-      return triggerError("Please enter your full name.");
-    }
-    if (!form.email.trim()) {
-      return triggerError("Please enter your email address.");
-    }
-    if (!validateEmail(form.email)) {
+    if (!form.name.trim()) return triggerError("Please enter your full name.");
+    if (!form.email.trim()) return triggerError("Please enter your email address.");
+    if (!validateEmail(form.email))
       return triggerError("Please enter a valid email address.");
-    }
-    if (!form.message.trim()) {
-      return triggerError("Please enter your message.");
-    }
+    if (!form.message.trim()) return triggerError("Please enter your message.");
 
-    // If everything is valid → success
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 4000);
 
-    // Clear form
     setForm({ name: "", email: "", message: "" });
   };
 
   return (
-    <div className="min-h-screen bg-[#f3ede6] py-12 px-4 relative">
+    <div className="min-h-screen bg-[#f5f0e8] py-12 px-4 relative">
       {/* SUCCESS TOAST */}
       {showSuccess && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#faf4e5] border border-[#d9d2c2] text-[#123524] shadow-[0_8px_24px_rgba(0,0,0,0.08)] rounded-2xl px-6 py-4 w-[350px] animate-fadeIn z-50">
           <h3 className="font-semibold mb-1">Message Sent!</h3>
-          <p className="text-sm text-[#46534c]">
+          <p className="text-sm text-[#35564a]">
             Thank you for contacting us. We'll get back to you soon.
           </p>
         </div>
@@ -71,14 +61,14 @@ function Contact() {
 
       {/* Header */}
       <div className="max-w-4xl mx-auto text-center mb-10">
-        <h1 className="text-4xl md:text-5xl font-extrabold bg-gradient-to-r from-[#123524] to-[#175c3c] bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-[#123524]">
           Get in Touch
         </h1>
-        <p className="mt-4 text-[#46534c] text-sm md:text-base">
+        <p className="mt-4 text-[#35564a] text-sm md:text-base">
           Have questions? We'd love to hear from you. Send us a message and
           we'll respond as soon as possible.
         </p>
-        <div className="mt-4 w-24 mx-auto border-t border-[#d8d2c8]" />
+        <div className="mt-4 w-24 mx-auto border-t border-[#ded4c7]" />
       </div>
 
       {/* Main layout */}
@@ -98,7 +88,7 @@ function Contact() {
                   value={form.name}
                   onChange={handleChange}
                   placeholder="Enter your full name"
-                  className="w-full rounded-md border-none bg-[#f0e7d6] px-4 py-3 text-sm text-[#123524] placeholder:text-[#948770] focus:outline-none focus:ring-2 focus:ring-[#123524]/70"
+                  className="w-full rounded-md border-none bg-[#f3ebdc] px-4 py-3 text-sm text-[#123524] placeholder:text-[#7f9488] focus:outline-none focus:ring-2 focus:ring-[#123524]/70"
                 />
               </div>
 
@@ -112,8 +102,8 @@ function Contact() {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
-                  placeholder="example@email.com"
-                  className="w-full rounded-md border-none bg-[#f0e7d6] px-4 py-3 text-sm text-[#123524] placeholder:text-[#948770] focus:outline-none focus:ring-2 focus:ring-[#123524]/70"
+                  placeholder="Enter your email address"
+                  className="w-full rounded-md border-none bg-[#f3ebdc] px-4 py-3 text-sm text-[#123524] placeholder:text-[#7f9488] focus:outline-none focus:ring-2 focus:ring-[#123524]/70"
                 />
               </div>
 
@@ -128,7 +118,7 @@ function Contact() {
                   onChange={handleChange}
                   rows="6"
                   placeholder="Tell us how we can help you..."
-                  className="w-full rounded-md border-none bg-[#f0e7d6] px-4 py-3 text-sm text-[#123524] placeholder:text-[#948770] resize-none focus:outline-none focus:ring-2 focus:ring-[#123524]/70"
+                  className="w-full rounded-md border-none bg-[#f3ebdc] px-4 py-3 text-sm text-[#123524] placeholder:text-[#7f9488] resize-none focus:outline-none focus:ring-2 focus:ring-[#123524]/70"
                 />
               </div>
 
@@ -154,13 +144,13 @@ function Contact() {
               <h3 className="font-semibold text-[#123524]">Email</h3>
               <a
                 href="mailto:info@havenstay.com"
-                className="block text-sm text-[#46534c] mt-1 underline underline-offset-2 decoration-[#c4bba9]"
+                className="block text-sm text-[#35564a] mt-1 underline underline-offset-2 decoration-[#c4bba9]"
               >
                 info@havenstay.com
               </a>
               <a
                 href="mailto:support@havenstay.com"
-                className="block text-sm text-[#46534c] underline underline-offset-2 decoration-[#c4bba9]"
+                className="block text-sm text-[#35564a] underline underline-offset-2 decoration-[#c4bba9]"
               >
                 support@havenstay.com
               </a>
@@ -176,11 +166,11 @@ function Contact() {
               <h3 className="font-semibold text-[#123524]">Phone</h3>
               <a
                 href="tel:+15551234567"
-                className="block text-sm text-[#46534c] mt-1 underline underline-offset-2 decoration-[#c4bba9]"
+                className="block text-sm text-[#35564a] mt-1 underline underline-offset-2 decoration-[#c4bba9]"
               >
                 +1 (555) 123-4567
               </a>
-              <p className="text-sm text-[#46534c]">Mon–Fri 9am–6pm EST</p>
+              <p className="text-sm text-[#35564a]">Mon–Fri 9am–6pm EST</p>
             </div>
           </div>
 
@@ -195,7 +185,7 @@ function Contact() {
                 href="https://www.google.com/maps?q=123+Travel+Street+New+York+NY+10001"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block text-sm text-[#46534c] mt-1 underline underline-offset-2 decoration-[#c4bba9]"
+                className="block text-sm text-[#35564a] mt-1 underline underline-offset-2 decoration-[#c4bba9]"
               >
                 123 Travel Street
                 <br />
