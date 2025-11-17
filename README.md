@@ -23,3 +23,9 @@
 - Integrated Lucide icons for a polished look
 
 ## **Fatat Mustapha**
+
+### **About page**
+- Created a responsive About Page using React + Tailwind.
+- Added hero title + description with HavenStay colors.
+- Implemented clean image/text layout with proper spacing.
+- Improved readability, structure, and overall UI design.
