@@ -50,7 +50,7 @@ function Home() {
       <section className="relative h-[640px] w-full overflow-hidden">
         {/* Background image */}
         <div
-          className="absolute inset-0 bg-center bg-cover"
+          className="absolute inset-0 bg-cover bg-center"
           style={{ backgroundImage: `url(${heroImage})` }}
         />
 
@@ -58,17 +58,17 @@ function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-black/5" />
 
         {/* Content */}
-        <div className="relative z-10 flex flex-col items-center max-w-6xl px-4 pb-16 mx-auto text-center text-white sm:px-6 pt-28">
-          <h1 className="mb-4 text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-16 flex flex-col items-center text-center text-white">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4">
             Find Your Perfect Stay
           </h1>
 
-          <p className="mb-8 text-lg sm:text-xl md:text-2xl">
+          <p className="text-lg sm:text-xl md:text-2xl mb-8">
             Discover amazing accommodations around the world
           </p>
 
           {/* 🔍 Search card */}
-          <div className="w-full max-w-4xl px-6 py-5 shadow-xl bg-white/95 rounded-3xl sm:px-8 sm:py-6">
+          <div className="w-full max-w-4xl bg-white/95 rounded-3xl shadow-xl px-6 py-5 sm:px-8 sm:py-6">
             <div className="grid grid-cols-1 md:grid-cols-[1.1fr,1.1fr,0.9fr] gap-4 items-end">
               {/* Country */}
               <div className="flex flex-col">
@@ -140,7 +140,7 @@ function Home() {
 
       {/* FEATURED PROPERTIES HEADER */}
       <section className="bg-[#f5f0e8] py-14 sm:py-16">
-        <div className="max-w-4xl px-4 mx-auto text-center">
+        <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[#123524] mb-3">
             Featured Properties
           </h2>
@@ -152,7 +152,7 @@ function Home() {
 
       {/* FEATURED PROPERTIES GRID */}
       <section className="bg-[#f5f0e8] pb-16">
-        <div className="max-w-6xl px-4 mx-auto sm:px-6">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-3">
             {featuredProperties.map((property) => (
               <article
@@ -164,7 +164,7 @@ function Home() {
                   <img
                     src={property.image}
                     alt={property.title}
-                    className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   {/* Price badge */}
                   <div className="absolute top-4 right-4 bg-[#123524] text-white text-xs sm:text-sm font-semibold px-4 py-2 rounded-full shadow">
@@ -173,7 +173,7 @@ function Home() {
                 </div>
 
                 {/* Content */}
-                <div className="px-5 pt-5 pb-6 sm:px-6">
+                <div className="px-5 sm:px-6 pt-5 pb-6">
                   <h3 className="text-lg sm:text-xl font-semibold text-[#123524] mb-1">
                     {property.title}
                   </h3>
@@ -185,7 +185,7 @@ function Home() {
                   </div>
 
                   {/* Type + beds */}
-                  <div className="flex items-center justify-between mb-3 text-sm">
+                  <div className="flex items-center justify-between text-sm mb-3">
                     <span className="font-semibold text-[#c9823a]">
                       {property.type}
                     </span>

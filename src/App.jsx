@@ -14,6 +14,8 @@ import Profile from "./pages/Profile.jsx";
 import Login from "./pages/Login.jsx";
 import SignUp from "./pages/SignUp.jsx";
 import ResetPassword from "./pages/ResetPassword.jsx";
+import PropertyDetails from "./pages/PropertyDetails.jsx";
+import BookingPage from "./pages/Booking.jsx";
 
 
 function App() {
@@ -68,6 +70,8 @@ function App() {
       >
         <Route path="/" element={<Home />} />
         <Route path="/properties" element={<Properties />} />
+          <Route path="/properties/:id" element={<PropertyDetails />} />
+          <Route path="/properties/:id/book" element={<BookingPage />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
 
