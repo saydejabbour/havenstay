@@ -1,7 +1,7 @@
 // src/pages/Properties.jsx
 import { useMemo, useState } from "react";
-import PropertyCard from "../components/PropertyCard";
-import { properties } from "../data/properties";
+import PropertyCard from "../components/PropertyCard.jsx";
+import { useMyProperties } from "../context/MyPropertiesContext.jsx";
 
 const countries = [
   "All Countries",
@@ -20,6 +20,8 @@ const types = ["All Types", "Apartment", "Studio", "Villa", "Chalet", "Hut"];
 const bedroomsOptions = ["All", "1", "2", "3", "4"];
 
 function PropertiesPage() {
+  const { properties } = useMyProperties();
+
   const [country, setCountry] = useState("All Countries");
   const [type, setType] = useState("All Types");
   const [minPrice, setMinPrice] = useState("");
@@ -35,7 +37,7 @@ function PropertiesPage() {
       if (maxPrice && p.price > Number(maxPrice)) return false;
       return true;
     });
-  }, [country, type, minPrice, maxPrice, bedrooms]);
+  }, [properties, country, type, minPrice, maxPrice, bedrooms]);
 
   return (
     <div className="min-h-screen bg-[#f5f0e8] pb-16">
@@ -50,7 +52,7 @@ function PropertiesPage() {
           </p>
         </div>
 
-        {/* Filter bar */}
+        {/* Filter bar (exactly your old design) */}
         <div className="bg-white rounded-2xl shadow-md p-6 mb-10">
           <h2 className="text-lg font-semibold text-emerald-900 mb-4">
             Filter Properties
@@ -74,9 +76,6 @@ function PropertiesPage() {
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
-                  
-                </span>
               </div>
             </div>
 
@@ -97,9 +96,6 @@ function PropertiesPage() {
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
-                  
-                </span>
               </div>
             </div>
 
@@ -148,9 +144,6 @@ function PropertiesPage() {
                     </option>
                   ))}
                 </select>
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">
-                  
-                </span>
               </div>
             </div>
           </div>

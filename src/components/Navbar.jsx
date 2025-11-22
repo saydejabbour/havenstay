@@ -2,23 +2,43 @@ import { Link, NavLink } from "react-router-dom";
 import { Home, Building2, Info, Mail, Plus, User, LogOut } from "lucide-react";
 import logo from "../images/havenstay-logo.png";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-
-// 🔹 add onLogout here
 function Navbar({ isLoggedIn, username, onLogout }) {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
+  // initial value: from localStorage or from username prop or "Guest user"
+  const [displayName, setDisplayName] = useState(
+    () => localStorage.getItem("profileFullName") || username || "Guest user"
+  );
+
+  // 🔥 listen for profile updates
+  useEffect(() => {
+    const handleProfileUpdated = () => {
+      const savedName = localStorage.getItem("profileFullName");
+      if (savedName && savedName.trim() !== "") {
+        setDisplayName(savedName);
+      } else {
+        setDisplayName(username || "Guest user");
+      }
+    };
+
+    window.addEventListener("profileUpdated", handleProfileUpdated);
+
+    // cleanup
+    return () => {
+      window.removeEventListener("profileUpdated", handleProfileUpdated);
+    };
+  }, [username]);
 
   return (
     <header className="w-full bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 py-3 flex items-center justify-between relative">
-
         {/* -------- LEFT: LOGO -------- */}
         <Link to="/" className="flex items-center gap-3">
-          <img 
-            src={logo} 
+          <img
+            src={logo}
             alt="HavenStay Logo"
             className="w-10 h-10 rounded-lg object-cover"
           />
@@ -33,7 +53,6 @@ function Navbar({ isLoggedIn, username, onLogout }) {
 
         {/* -------- NAV LINKS -------- */}
         <nav className="flex items-center gap-6">
-
           {/* ---- Home ---- */}
           <NavLink
             to="/"
@@ -127,16 +146,18 @@ function Navbar({ isLoggedIn, username, onLogout }) {
                 "
               >
                 <User size={18} />
-                {username}
+                {displayName}
               </button>
 
               {/* Dropdown */}
               {open && (
-                <div className="
-                  absolute right-0 mt-2 w-40 
-                  bg-white shadow-lg rounded-lg border 
-                  py-2 z-50
-                ">
+                <div
+                  className="
+                    absolute right-0 mt-2 w-40 
+                    bg-white shadow-lg rounded-lg border 
+                    py-2 z-50
+                  "
+                >
                   <Link
                     to="/profile"
                     className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 transition"
@@ -146,22 +167,22 @@ function Navbar({ isLoggedIn, username, onLogout }) {
                     My Profile
                   </Link>
 
-                 <button
-  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 transition w-full text-left"
-  onClick={() => {
-    console.log("Logged out");
-    setOpen(false);
+                  <button
+                    className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 transition w-full text-left"
+                    onClick={() => {
+                      console.log("Logged out");
+                      setOpen(false);
 
-    if (onLogout) {
-      onLogout();      // clears the user in App.jsx
-    }
+                      if (onLogout) {
+                        onLogout(); // clears the user in App.jsx
+                      }
 
-    navigate("/");      // 👈 FORCE redirect to home page
-  }}
->
-  <LogOut size={18} />
-  Log out
-</button>
+                      navigate("/"); // redirect to home page
+                    }}
+                  >
+                    <LogOut size={18} />
+                    Log out
+                  </button>
                 </div>
               )}
             </div>
