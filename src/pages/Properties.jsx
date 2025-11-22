@@ -1,5 +1,6 @@
 // src/pages/Properties.jsx
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect, startTransition } from "react";
+import { useSearchParams } from "react-router-dom";
 import PropertyCard from "../components/PropertyCard.jsx";
 import { useMyProperties } from "../context/MyPropertiesContext.jsx";
 
@@ -27,6 +28,24 @@ function PropertiesPage() {
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("All");
+
+  // 🔎 Read query params from the URL (?country=France&type=Apartment)
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+  const countryParam = searchParams.get("country");
+  const typeParam = searchParams.get("type");
+
+  startTransition(() => {
+    if (countryParam && countries.includes(countryParam)) {
+      setCountry(countryParam);
+    }
+
+    if (typeParam && types.includes(typeParam)) {
+      setType(typeParam);
+    }
+  });
+}, [searchParams]);
 
   const filtered = useMemo(() => {
     return properties.filter((p) => {
