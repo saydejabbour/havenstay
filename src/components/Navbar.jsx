@@ -1,12 +1,26 @@
-import { Link, NavLink } from "react-router-dom";
-import { Home, Building2, Info, Mail, Plus, User, LogOut } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import {
+  Home,
+  Building2,
+  Info,
+  Mail,
+  Plus,
+  User,
+  LogOut,
+  Menu,
+  X,
+} from "lucide-react";
 import logo from "../images/havenstay-logo.png";
-import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 function Navbar({ isLoggedIn, username, onLogout }) {
-  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+
+  // profile dropdown (desktop)
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // mobile hamburger menu
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // initial value: from localStorage or from username prop or "Guest user"
   const [displayName, setDisplayName] = useState(
@@ -26,11 +40,13 @@ function Navbar({ isLoggedIn, username, onLogout }) {
 
     window.addEventListener("profileUpdated", handleProfileUpdated);
 
-    // cleanup
     return () => {
       window.removeEventListener("profileUpdated", handleProfileUpdated);
     };
   }, [username]);
+
+  // helper to close mobile menu after clicking a link
+  const closeMobileMenu = () => setIsMobileOpen(false);
 
   return (
     <header className="w-full bg-white shadow-sm border-b border-gray-200">
@@ -51,8 +67,8 @@ function Navbar({ isLoggedIn, username, onLogout }) {
           </div>
         </Link>
 
-        {/* -------- NAV LINKS -------- */}
-        <nav className="flex items-center gap-6">
+        {/* -------- DESKTOP NAV -------- */}
+        <nav className="hidden md:flex items-center gap-6">
           {/* ---- Home ---- */}
           <NavLink
             to="/"
@@ -131,12 +147,11 @@ function Navbar({ isLoggedIn, username, onLogout }) {
             </Link>
           )}
 
-          {/* -------- USER DROPDOWN -------- */}
+          {/* -------- USER DROPDOWN (DESKTOP) -------- */}
           {isLoggedIn && (
             <div className="relative">
-              {/* Avatar + Username button */}
               <button
-                onClick={() => setOpen(!open)}
+                onClick={() => setIsProfileOpen(!isProfileOpen)}
                 className="
                   flex items-center gap-2 
                   text-green-900 
@@ -149,8 +164,7 @@ function Navbar({ isLoggedIn, username, onLogout }) {
                 {displayName}
               </button>
 
-              {/* Dropdown */}
-              {open && (
+              {isProfileOpen && (
                 <div
                   className="
                     absolute right-0 mt-2 w-40 
@@ -161,7 +175,7 @@ function Navbar({ isLoggedIn, username, onLogout }) {
                   <Link
                     to="/profile"
                     className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 transition"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setIsProfileOpen(false)}
                   >
                     <User size={18} />
                     My Profile
@@ -171,13 +185,13 @@ function Navbar({ isLoggedIn, username, onLogout }) {
                     className="flex items-center gap-2 px-4 py-2 hover:bg-gray-100 transition w-full text-left"
                     onClick={() => {
                       console.log("Logged out");
-                      setOpen(false);
+                      setIsProfileOpen(false);
 
                       if (onLogout) {
-                        onLogout(); // clears the user in App.jsx
+                        onLogout();
                       }
 
-                      navigate("/"); // redirect to home page
+                      navigate("/");
                     }}
                   >
                     <LogOut size={18} />
@@ -203,7 +217,102 @@ function Navbar({ isLoggedIn, username, onLogout }) {
             </Link>
           )}
         </nav>
+
+        {/* -------- MOBILE HAMBURGER BUTTON -------- */}
+        <button
+          className="md:hidden inline-flex items-center justify-center p-2 rounded-lg border border-green-900 text-green-900"
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+        >
+          {isMobileOpen ? <X size={22} /> : <Menu size={22} />}
+        </button>
       </div>
+
+      {/* -------- MOBILE NAV (DROPDOWN) -------- */}
+      {isMobileOpen && (
+        <nav className="md:hidden bg-white border-t border-gray-200 px-6 pb-4 space-y-2">
+          <NavLink
+            to="/"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-2 py-2 text-green-900"
+          >
+            <Home size={18} />
+            Home
+          </NavLink>
+
+          <NavLink
+            to="/properties"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-2 py-2 text-green-900"
+          >
+            <Building2 size={18} />
+            Properties
+          </NavLink>
+
+          <NavLink
+            to="/about"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-2 py-2 text-green-900"
+          >
+            <Info size={18} />
+            About
+          </NavLink>
+
+          <NavLink
+            to="/contact"
+            onClick={closeMobileMenu}
+            className="flex items-center gap-2 py-2 text-green-900"
+          >
+            <Mail size={18} />
+            Contact
+          </NavLink>
+
+          {isLoggedIn && (
+            <>
+              <Link
+                to="/list-property"
+                onClick={closeMobileMenu}
+                className="flex items-center gap-2 py-2 text-green-900"
+              >
+                <Plus size={18} />
+                List your place
+              </Link>
+
+              <Link
+                to="/profile"
+                onClick={closeMobileMenu}
+                className="flex items-center gap-2 py-2 text-green-900"
+              >
+                <User size={18} />
+                My Profile
+              </Link>
+
+              <button
+                className="flex items-center gap-2 py-2 text-green-900 w-full text-left"
+                onClick={() => {
+                  console.log("Logged out");
+                  closeMobileMenu();
+                  if (onLogout) onLogout();
+                  navigate("/");
+                }}
+              >
+                <LogOut size={18} />
+                Log out
+              </button>
+            </>
+          )}
+
+          {!isLoggedIn && (
+            <Link
+              to="/login"
+              onClick={closeMobileMenu}
+              className="flex items-center gap-2 py-2 text-green-900"
+            >
+              <User size={18} />
+              Login
+            </Link>
+          )}
+        </nav>
+      )}
     </header>
   );
 }

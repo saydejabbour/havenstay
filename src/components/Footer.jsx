@@ -31,22 +31,46 @@ function Footer() {
           </ul>
         </div>
 
-        {/* Contact Info */}
+        {/* Contact Info (NOW CLICKABLE) */}
         <div>
           <h3 className="text-lg font-semibold mb-4">Contact Info</h3>
           <ul className="space-y-3 text-sm">
+
+            {/* Email */}
             <li className="flex items-center gap-3">
               <Mail className="w-5 h-5" />
-              <span>info@havenstay.com</span>
+              <a
+                href="mailto:info@havenstay.com"
+                className="hover:underline"
+              >
+                info@havenstay.com
+              </a>
             </li>
+
+            {/* Phone */}
             <li className="flex items-center gap-3">
               <Phone className="w-5 h-5" />
-              <span>+1 (555) 123-4567</span>
+              <a
+                href="tel:+15551234567"
+                className="hover:underline"
+              >
+                +1 (555) 123-4567
+              </a>
             </li>
+
+            {/* Address → Google Maps */}
             <li className="flex items-center gap-3">
               <MapPin className="w-5 h-5" />
-              <span>123 Travel Street, City</span>
+              <a
+                href="https://www.google.com/maps?q=123+Travel+Street,+City"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                123 Travel Street, City
+              </a>
             </li>
+
           </ul>
         </div>
 
