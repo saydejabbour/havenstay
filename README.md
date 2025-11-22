@@ -1,55 +1,94 @@
-## **Sayde Jabbour**
+## **HavenStay – Accommodation Finder Web Application**
 
-### **Navbar**
+HavenStay is a modern ReactJS-based web application designed to help users browse, explore, and book accommodations around the world. The platform focuses on clean UI/UX, responsive design, and a smooth user experience. Users can view property listings, check details, filter by country/type, book stays, and manage their profile. Logged-in users can also list new properties on the platform.
 
-- Implemented the full HavenStay navbar with dark-green themed links
-- Added hover circle effects to all navigation items
-- Created a user dropdown menu (Profile / Logout)
-- Added a styled **“List your place”** button for logged-in users
-- Username is currently static and will be replaced once the login system is added
+### **🚀 Live Demo**
 
-### **Footer**
+🔗 https://havenstay-tawny.vercel.app/
 
-- Added HavenStay footer with brand, quick links, and contact info
-- Integrated lucide icons (Home, Mail, Phone, MapPin)
-- Connected footer to all pages using Layout.jsx
+### **📌 Features**
 
-### **Contact Page**
+Fully responsive UI built with ReactJS + Tailwind CSS
 
-- Built a clean, responsive HavenStay contact page
-- Added functional email, phone, and location links
-- Implemented form validation + error & success toasts
-- Applied improved color palette and soft UI enhancements
-- Integrated Lucide icons for a polished look
+Clean navigation using React Router DOM
 
-### **Authentication System**
+Dynamic property details using URL parameters
 
-- Added login, signup, and reset-password pages with HavenStay styling
-- Implemented a reusable Toast component for global alerts
-- Added “Back to Home” button across all auth pages
-- Enabled persistent login state using localStorage
-- Connected navbar to auth (username, dropdown, protected routes)
-- Fixed logout flow and redirected users to the Home page
+Booking page with form handling
 
-## **Fatat Mustapha**
+Login / Signup / Logout using localStorage session
 
-### **About page**
+Profile page with editable user information
 
-- Created a responsive About Page using React + Tailwind.
-- Added hero title + description with HavenStay colors.
-- Implemented clean image/text layout with proper spacing.
-- Improved readability, structure, and overall UI design.
+List Property page (protected route)
 
-### **Home Page**
+Global property state with React Context API
 
-- Built a responsive Home Page using React + Tailwind.
+Reusable components (Navbar, Footer, PropertyCard, Toast)
 
-- Added hero section with custom image, gradient, and centered text.
+Fully deployed on Vercel
 
-- Created a modern search card with dropdowns + search button.
+### **🔑 Key Code (Summaries)**
 
-- Designed a Featured Properties section with clean title + subtitle.
+Layout Component
 
-- Added three property cards with local images and hover zoom effect.
+Wraps the entire application with a Navbar, Footer, and an <Outlet /> for page rendering.
 
-- Included price badge, icons, and “View Details” button linking to Properties.
+MyPropertiesContext
+
+Stores all default properties + new properties added by users. Accessible across all pages.
+
+App Routing
+
+Defines all routes, protected routes (Profile + List Property), and wraps everything with Layout and Providers.
+
+Authentication
+
+User data is stored in localStorage so the session persists across refresh.
+
+### **🛠️ Technologies Used**
+
+ReactJS
+
+React Router DOM
+
+Tailwind CSS
+
+Lucide Icons
+
+Vercel Deployment
+
+Git & GitHub Version Control
+
+### **📥 Installation & Setup**
+
+# Clone repository
+
+git clone https://github.com/saydejabbour/havenstay
+
+# Navigate to project
+
+cd havenstay
+
+# Install dependencies
+
+npm install
+
+# Run development server
+
+npm run dev
+
+### **📌 Future Improvements**
+
+Real backend for authentication(next part)
+
+Database for properties(next part)
+
+### **👥 Team Members**
+
+Sayde Jabbour – 52331215
+
+Fatat Mustapha – 52210298
+
+Instructor: Dr. Ahmad Trad
+Semester: Fall 2025–2026
