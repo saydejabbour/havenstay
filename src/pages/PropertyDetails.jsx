@@ -1,13 +1,21 @@
 // src/pages/PropertyDetails.jsx
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { properties } from "../data/properties";
+// ❌ remove this:
+// import { properties } from "../data/properties";
 import { MapPin, Check } from "lucide-react";
 import { useState } from "react";
+// ✅ add this:
+import { useMyProperties } from "../context/MyPropertiesContext.jsx";
 
 function PropertyDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const property = properties.find((p) => p.id === Number(id));
+
+  // ✅ get all properties (old + new)
+  const { properties } = useMyProperties();
+
+  // find property dynamically
+  const property = properties.find((p) => String(p.id) === id);
 
   const [activeImage, setActiveImage] = useState(
     property ? property.mainImage : ""
@@ -24,7 +32,6 @@ function PropertyDetails() {
   return (
     <div className="min-h-screen bg-[#f5f0e8] pb-16">
       <div className="max-w-6xl mx-auto px-4 pt-10">
-        {/* Back button */}
         <button
           onClick={() => navigate(-1)}
           className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#f7f0de] text-slate-700 text-sm font-medium shadow hover:bg-[#f1e5cd] mb-6"
@@ -32,7 +39,6 @@ function PropertyDetails() {
           ← Back
         </button>
 
-        {/* Main image */}
         <div className="bg-white rounded-3xl shadow-md overflow-hidden mb-8">
           <img
             src={activeImage}
@@ -45,12 +51,14 @@ function PropertyDetails() {
               <h1 className="text-3xl font-bold text-emerald-900 mb-2">
                 {property.title}
               </h1>
+
               <div className="flex items-center text-sm text-slate-600 mb-2">
                 <MapPin className="h-4 w-4 mr-1 text-emerald-800" />
                 <span>
                   {property.city}, {property.country}
                 </span>
               </div>
+
               <div className="flex items-center gap-3 text-sm">
                 <span className="px-3 py-1 rounded-full bg-amber-300/80 text-emerald-900 font-medium">
                   {property.type}
@@ -68,6 +76,7 @@ function PropertyDetails() {
                   /night
                 </span>
               </div>
+
               <Link
                 to={`/properties/${property.id}/book`}
                 className="mt-3 inline-flex justify-center px-6 py-2.5 bg-emerald-900 text-white rounded-lg font-semibold hover:bg-emerald-800 transition-colors"
@@ -78,7 +87,7 @@ function PropertyDetails() {
           </div>
         </div>
 
-        {/* Image thumbnails */}
+        {/* Thumbnails */}
         <div className="mb-10 flex gap-4 overflow-x-auto pb-2">
           {property.images.map((img) => (
             <button
@@ -109,7 +118,7 @@ function PropertyDetails() {
           <hr className="my-4 border-[#efe2c9]" />
 
           <h3 className="text-xl font-semibold text-emerald-900 mb-4">
-            Features &amp; Amenities
+            Features & Amenities
           </h3>
           <div className="grid md:grid-cols-3 gap-y-3">
             {property.amenities.map((amenity) => (

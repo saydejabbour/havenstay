@@ -1,13 +1,21 @@
 // src/pages/Booking.jsx
 import { useParams, useNavigate } from "react-router-dom";
-import { properties } from "../data/properties";
+// ❌ remove this line:
+// import { properties } from "../data/properties";
 import { MapPin } from "lucide-react";
 import { useState } from "react";
+// ✅ NEW: use properties from context (seed + new)
+import { useMyProperties } from "../context/MyPropertiesContext.jsx";
 
 function Booking() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const property = properties.find((p) => p.id === Number(id));
+
+  // ✅ get all properties from context
+  const { properties } = useMyProperties();
+
+  // ✅ find the property (works for old + new ones)
+  const property = properties.find((p) => String(p.id) === id);
 
   // alert banner (error or success)
   const [alert, setAlert] = useState(null);
