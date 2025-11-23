@@ -92,3 +92,49 @@ Fatat Mustapha – 52210298
 
 Instructor: Dr. Ahmad Trad
 Semester: Fall 2025–2026
+
+### **Screenshots**
+
+### 🏠 Homepage
+
+![Homepage](./assets/Screenshot1.png)
+
+### 🏘️ Properties Page
+
+![Properties Page](./assets/Screenshot2.png)
+
+### ℹ️ About Page
+
+![About Page](./assets/Screenshot3.png)
+
+### 📞 Contact Page
+
+![Contact Page](./assets/Screenshot4.png)
+
+### 🔐 Login Page
+
+![Login Page](./assets/Screenshot5.png)
+
+### 📝 Sign Up Page
+
+![Sign Up Page](./assets/Screenshot6.png)
+
+### 🔄 Reset Password Page
+
+![Reset Password Page](./assets/Screenshot7.png)
+
+### 👤 My Profile Page
+
+![My Profile](./assets/Screenshot8.png)
+
+### 🏡 Add Your Property Page
+
+![List Your Place](./assets/Screenshot9.png)
+
+### 🏘️ Property Detail Page
+
+![Property Detail](./assets/Screenshot10.png)
+
+### 📅 Booking Page
+
+![Booking Page](./assets/Screenshot11.png)
