@@ -4,7 +4,9 @@ import { Mail, Phone, MapPin } from "lucide-react";
 function Contact() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showError, setShowError] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState(""); // ✅ backend message
+  const [errorMsg, setErrorMsg] = useState("");     // ✅ backend message
+  const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -24,19 +26,56 @@ function Contact() {
     setTimeout(() => setShowError(false), 4000);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (!form.name.trim()) return triggerError("Please enter your full name.");
-    if (!form.email.trim()) return triggerError("Please enter your email address.");
-    if (!validateEmail(form.email))
-      return triggerError("Please enter a valid email address.");
-    if (!form.message.trim()) return triggerError("Please enter your message.");
-
+  const triggerSuccess = (msg) => {
+    setSuccessMsg(msg);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 4000);
+  };
 
-    setForm({ name: "", email: "", message: "" });
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // ✅ Frontend validation (quick UX)
+    if (!form.name.trim()) return triggerError("Please enter your full name.");
+    if (!form.email.trim()) return triggerError("Please enter your email address.");
+    if (!validateEmail(form.email)) return triggerError("Please enter a valid email address.");
+    if (!form.message.trim()) return triggerError("Please enter your message.");
+
+    try {
+      setLoading(true);
+
+      const token = localStorage.getItem("token"); // optional
+      const res = await fetch("http://localhost:5000/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify({
+          full_name: form.name,
+          email: form.email,
+          message: form.message,
+        }),
+      });
+
+      const data = await res.json();
+
+      // ✅ Toast messages come from backend
+      if (!res.ok) {
+        triggerError(data?.message || "Failed to send message.");
+        return;
+      }
+
+      triggerSuccess(data?.message || "Message sent ✅ We will reply soon.");
+
+      // reset form
+      setForm({ name: "", email: "", message: "" });
+    } catch (err) {
+      console.log(err);
+      triggerError("Server not reachable. Make sure backend is running on port 5000.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,9 +84,7 @@ function Contact() {
       {showSuccess && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-[#faf4e5] border border-[#d9d2c2] text-[#123524] shadow-[0_8px_24px_rgba(0,0,0,0.08)] rounded-2xl px-6 py-4 w-[350px] animate-fadeIn z-50">
           <h3 className="font-semibold mb-1">Message Sent!</h3>
-          <p className="text-sm text-[#35564a]">
-            Thank you for contacting us. We'll get back to you soon.
-          </p>
+          <p className="text-sm text-[#35564a]">{successMsg}</p>
         </div>
       )}
 
@@ -125,9 +162,12 @@ function Contact() {
               {/* Button */}
               <button
                 type="submit"
-                className="w-full rounded-md bg-[#123524] text-white py-3 text-sm font-semibold tracking-wide hover:bg-[#0f2a1c] active:scale-[0.99] transition"
+                disabled={loading}
+                className={`w-full rounded-md text-white py-3 text-sm font-semibold tracking-wide active:scale-[0.99] transition
+                  ${loading ? "bg-[#123524]/70 cursor-not-allowed" : "bg-[#123524] hover:bg-[#0f2a1c]"}
+                `}
               >
-                Send Message
+                {loading ? "Sending..." : "Send Message"}
               </button>
             </form>
           </div>

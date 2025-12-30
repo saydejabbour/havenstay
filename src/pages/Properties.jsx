@@ -1,8 +1,10 @@
 // src/pages/Properties.jsx
-import { useMemo, useState, useEffect, startTransition } from "react";
+import { useState, useEffect, startTransition } from "react";
 import { useSearchParams } from "react-router-dom";
 import PropertyCard from "../components/PropertyCard.jsx";
-import { useMyProperties } from "../context/MyPropertiesContext.jsx";
+
+// ✅ backend axios instance
+import api from "../api/api";
 
 const countries = [
   "All Countries",
@@ -21,42 +23,67 @@ const types = ["All Types", "Apartment", "Studio", "Villa", "Chalet", "Hut"];
 const bedroomsOptions = ["All", "1", "2", "3", "4"];
 
 function PropertiesPage() {
-  const { properties } = useMyProperties();
+  // ✅ Real data from backend
+  const [properties, setProperties] = useState([]);
 
+  // ✅ UI states
   const [country, setCountry] = useState("All Countries");
   const [type, setType] = useState("All Types");
   const [minPrice, setMinPrice] = useState("");
   const [maxPrice, setMaxPrice] = useState("");
   const [bedrooms, setBedrooms] = useState("All");
 
+  // ✅ Loading / error
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
   // 🔎 Read query params from the URL (?country=France&type=Apartment)
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
-  const countryParam = searchParams.get("country");
-  const typeParam = searchParams.get("type");
+    const countryParam = searchParams.get("country");
+    const typeParam = searchParams.get("type");
 
-  startTransition(() => {
-    if (countryParam && countries.includes(countryParam)) {
-      setCountry(countryParam);
-    }
+    startTransition(() => {
+      if (countryParam && countries.includes(countryParam)) {
+        setCountry(countryParam);
+      }
 
-    if (typeParam && types.includes(typeParam)) {
-      setType(typeParam);
-    }
-  });
-}, [searchParams]);
-
-  const filtered = useMemo(() => {
-    return properties.filter((p) => {
-      if (country !== "All Countries" && p.country !== country) return false;
-      if (type !== "All Types" && p.type !== type) return false;
-      if (bedrooms !== "All" && p.bedrooms !== Number(bedrooms)) return false;
-      if (minPrice && p.price < Number(minPrice)) return false;
-      if (maxPrice && p.price > Number(maxPrice)) return false;
-      return true;
+      if (typeParam && types.includes(typeParam)) {
+        setType(typeParam);
+      }
     });
-  }, [properties, country, type, minPrice, maxPrice, bedrooms]);
+  }, [searchParams]);
+
+  // ✅ Fetch from backend whenever filters change
+  useEffect(() => {
+    async function fetchProperties() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await api.get("/properties", {
+          params: {
+            country: country,
+            type: type,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+            bedrooms: bedrooms,
+          },
+        });
+
+        setProperties(res.data || []);
+      } catch (e) {
+       setError(e?.response?.data?.error || e?.response?.data?.message || "Failed to load properties");
+
+        setProperties([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchProperties();
+  }, [country, type, minPrice, maxPrice, bedrooms]);
 
   return (
     <div className="min-h-screen bg-[#f5f0e8] pb-16">
@@ -168,15 +195,25 @@ function PropertiesPage() {
           </div>
         </div>
 
-        {/* Properties grid */}
+        {/* Result line */}
         <div className="mb-4 text-sm text-slate-700">
-          Showing <span className="font-semibold">{filtered.length}</span>{" "}
-          properties
+          {loading ? (
+            <span>Loading properties...</span>
+          ) : error ? (
+            <span className="text-red-600">{error}</span>
+          ) : (
+            <>
+              Showing <span className="font-semibold">{properties.length}</span>{" "}
+              properties
+            </>
+          )}
         </div>
+
+        {/* Properties grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filtered.map((p) => (
-            <PropertyCard key={p.id} property={p} />
-          ))}
+          {!loading &&
+            !error &&
+            properties.map((p) => <PropertyCard key={p.id} property={p} />)}
         </div>
       </div>
     </div>

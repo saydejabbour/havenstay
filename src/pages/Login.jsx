@@ -2,12 +2,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Toast from "../components/Toast";
+import api from "../api/api"; // ✅ use axios instance
 
 function Login({ onLogin, isLoggedIn }) {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [toast, setToast] = useState(null);
   const showToast = (variant, message, title) => {
@@ -20,36 +22,52 @@ function Login({ onLogin, isLoggedIn }) {
     }
   }, [isLoggedIn, navigate]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setToast(null);
 
-    if (!email || !password) {
-      showToast("error", "Please fill in both email and password.");
-      return;
+    try {
+      setLoading(true);
+
+      const res = await api.post("/auth/login", {
+        email: email.trim(),
+        password,
+      });
+
+      // ✅ backend decides success message
+      showToast("success", res.data.message, "Success");
+
+      // save auth data
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      if (onLogin) {
+        onLogin(res.data.user);
+      }
+
+      setTimeout(() => {
+        navigate("/");
+      }, 700);
+    } catch (err) {
+      // ✅ backend decides error message
+      const msg =
+        err.response?.data?.message ||
+        "Unable to login. Please try again.";
+
+      showToast("error", msg, "Login failed");
+    } finally {
+      setLoading(false);
     }
-
-    if (!email.includes("@")) {
-      showToast("error", "Please enter a valid email address.");
-      return;
-    }
-
-    // fake success for now
-    onLogin();
-    showToast("success", "You have logged in successfully.", "Logged in");
-
-    setTimeout(() => {
-      navigate("/");
-    }, 700);
   };
 
   return (
     <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center px-4">
       <Link
-  to="/"
-  className="absolute top-6 left-6 flex items-center gap-2 text-emerald-900 hover:underline text-sm font-medium"
->
-  ← Back to home
-</Link>
+        to="/"
+        className="absolute top-6 left-6 flex items-center gap-2 text-emerald-900 hover:underline text-sm font-medium"
+      >
+        ← Back to home
+      </Link>
 
       <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.08)] p-8">
         <h1 className="text-3xl font-semibold text-emerald-900 mb-2">
@@ -67,16 +85,15 @@ function Login({ onLogin, isLoggedIn }) {
             </label>
             <input
               type="email"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
+              className="w-full rounded-lg border text-slate-600 bg-[#f8f0e2] px-3 py-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
             />
           </div>
 
-          {/* Password + forgot link */}
+          {/* Password */}
           <div>
             <div className="flex items-center justify-between mb-1">
               <label className="text-sm font-medium text-slate-700">
@@ -91,20 +108,25 @@ function Login({ onLogin, isLoggedIn }) {
             </div>
             <input
               type="password"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
+              className="w-full rounded-lg border text-slate-600 bg-[#f8f0e2] px-3 py-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full mt-3 rounded-lg bg-emerald-900 text-white py-2.5 text-sm font-medium hover:bg-emerald-800 transition"
+            disabled={loading}
+            className={`w-full mt-3 rounded-lg py-2.5 text-sm font-medium transition
+              ${
+                loading
+                  ? "bg-emerald-900/60 text-white cursor-not-allowed"
+                  : "bg-emerald-900 text-white hover:bg-emerald-800"
+              }`}
           >
-            Log In
+            {loading ? "Logging in..." : "Log In"}
           </button>
         </form>
 

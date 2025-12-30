@@ -6,49 +6,89 @@ import Toast from "../components/Toast";
 function ResetPassword() {
   const navigate = useNavigate();
 
+  // Step control
+  const [step, setStep] = useState(1); // 1 = request code, 2 = reset password
+  const [loading, setLoading] = useState(false);
+
+  // inputs
   const [email, setEmail] = useState("");
+  const [resetToken, setResetToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirm, setConfirm] = useState("");
 
+  // toast
   const [toast, setToast] = useState(null);
   const showToast = (variant, message, title) => {
     setToast({ variant, message, title });
   };
 
-  const handleSubmit = (e) => {
+  // Step 1: request reset code
+  const handleRequestCode = async (e) => {
     e.preventDefault();
 
-    if (!email || !newPassword || !confirm) {
-      showToast("error", "Please fill in all fields.");
-      return;
+    try {
+      setLoading(true);
+
+      const res = await fetch("http://localhost:5000/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showToast("error", data.message || "Failed to generate reset code.");
+        return;
+      }
+
+      // backend returns reset_token for testing (no email yet)
+      setResetToken(data.reset_token || "");
+      setStep(2);
+
+      showToast("success", data.message, "Reset Code Ready");
+    } catch (err) {
+      console.log(err);
+      showToast("error", "Server not reachable. Make sure backend is running on port 5000.");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    if (!email.includes("@")) {
-      showToast("error", "Please enter a valid email address.");
-      return;
+  // Step 2: reset password using code
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+
+    try {
+      setLoading(true);
+
+      const res = await fetch("http://localhost:5000/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          reset_token: resetToken.trim(),
+          new_password: newPassword,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showToast("error", data.message || "Failed to reset password.");
+        return;
+      }
+
+      showToast("success", data.message, "Password Updated");
+
+      setTimeout(() => {
+        navigate("/login");
+      }, 800);
+    } catch (err) {
+      console.log(err);
+      showToast("error", "Server not reachable. Make sure backend is running on port 5000.");
+    } finally {
+      setLoading(false);
     }
-
-    if (newPassword.length < 6) {
-      showToast("error", "Password should be at least 6 characters long.");
-      return;
-    }
-
-    if (newPassword !== confirm) {
-      showToast("error", "Passwords do not match.");
-      return;
-    }
-
-    // Here you would normally call your backend to reset the password.
-    // For now we just show a success toast and redirect to login.
-    showToast(
-      "success",
-      "Your password has been reset successfully.",
-      "Password updated"
-    );
-
-    setTimeout(() => {
-      navigate("/login");
-    }, 800);
   };
 
   return (
@@ -57,63 +97,123 @@ function ResetPassword() {
         <h1 className="text-3xl font-semibold text-emerald-900 mb-2">
           Reset Password
         </h1>
-        <p className="text-sm text-slate-600 mb-8">
-          Enter your email and choose a new password.
-        </p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
-                         focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
+        {step === 1 ? (
+          <>
+            <p className="text-sm text-slate-600 mb-8">
+              Enter your email to generate a reset code.
+            </p>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              New Password
-            </label>
-            <input
-              type="password"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
-                         focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="••••••••"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
+            <form onSubmit={handleRequestCode} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Email
+                </label>
+                <input
+                  type="email"
+                  className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
+                             text-emerald-900 placeholder:text-emerald-900/50
+                             focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
+                  placeholder="you@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Confirm New Password
-            </label>
-            <input
-              type="password"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
-                         focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="••••••••"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-            />
-          </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full mt-3 rounded-lg py-2.5 text-sm font-medium transition
+                  ${loading ? "bg-emerald-900/60 text-white cursor-not-allowed" : "bg-emerald-900 text-white hover:bg-emerald-800"}`}
+              >
+                {loading ? "Generating..." : "Generate reset code"}
+              </button>
+            </form>
+          </>
+        ) : (
+          <>
+            <p className="text-sm text-slate-600 mb-6">
+              Paste the reset code and choose a new password.
+            </p>
 
-          <button
-            type="submit"
-            className="w-full mt-3 rounded-lg bg-emerald-900 text-white py-2.5 text-sm font-medium hover:bg-emerald-800 transition"
-          >
-            Reset password
-          </button>
-        </form>
+            <form onSubmit={handleResetPassword} className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Reset Code
+                </label>
+                <input
+                  type="text"
+                  className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
+                             text-emerald-900 placeholder:text-emerald-900/50
+                             focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
+                  placeholder="Paste code here"
+                  value={resetToken}
+                  onChange={(e) => setResetToken(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  New Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
+                             text-emerald-900 placeholder:text-emerald-900/50
+                             focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
+                  placeholder="••••••••"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Confirm New Password
+                </label>
+                <input
+                  type="password"
+                  className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
+                             text-emerald-900 placeholder:text-emerald-900/50
+                             focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
+                  placeholder="••••••••"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  disabled={loading}
+                />
+              </div>
+
+              {/* NOTE: confirm check can be done in backend later;
+                  if you want STRICT "backend messages only", remove this if block. */}
+              {confirm && newPassword && confirm !== newPassword && (
+                <p className="text-xs text-red-700">
+                  Passwords do not match (UI hint).
+                </p>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`w-full mt-3 rounded-lg py-2.5 text-sm font-medium transition
+                  ${loading ? "bg-emerald-900/60 text-white cursor-not-allowed" : "bg-emerald-900 text-white hover:bg-emerald-800"}`}
+              >
+                {loading ? "Updating..." : "Reset password"}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="w-full rounded-lg py-2 text-sm font-medium text-emerald-900 hover:underline"
+                disabled={loading}
+              >
+                ← Back to email step
+              </button>
+            </form>
+          </>
+        )}
 
         <p className="mt-6 text-center text-sm text-slate-600">
           <Link to="/login" className="text-emerald-900 font-semibold">

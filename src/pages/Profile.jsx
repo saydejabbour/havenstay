@@ -1,27 +1,63 @@
 // src/pages/Profile.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Phone, Home } from "lucide-react";
 import PropertyCard from "../components/PropertyCard.jsx";
-import { useMyProperties } from "../context/MyPropertiesContext.jsx";
 
 function Profile() {
   const navigate = useNavigate();
-  const { properties } = useMyProperties();
 
-  const myProperties = properties.filter((p) => p.isUser);
+  // account details come from logged-in user (DB)
+  const storedUser = localStorage.getItem("user");
+  const user = storedUser ? JSON.parse(storedUser) : null;
+
+  const [fullName, setFullName] = useState(user?.full_name || "");
+  const [phone, setPhone] = useState(user?.phone || "");
+
+  // my properties from backend
+  const [myProperties, setMyProperties] = useState([]);
+  const [loadingProps, setLoadingProps] = useState(false);
+
+  const token = localStorage.getItem("token");
+
+  const loadMyProperties = async () => {
+    try {
+      setLoadingProps(true);
+
+      const res = await fetch("http://localhost:5000/properties/my", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        console.log(data);
+        setMyProperties([]);
+        return;
+      }
+
+      setMyProperties(data);
+    } catch (err) {
+      console.log(err);
+      setMyProperties([]);
+    } finally {
+      setLoadingProps(false);
+    }
+  };
+
+  useEffect(() => {
+    loadMyProperties();
+  }, []);
+
   const count = myProperties.length;
 
-  const [fullName, setFullName] = useState(
-    () => localStorage.getItem("profileFullName") || ""
-  );
-  const [phone, setPhone] = useState(
-    () => localStorage.getItem("profilePhone") || ""
-  );
-
+  // ✅ For now: keep "Edit Profile" local only (we’ll connect DB update after)
   const handleSaveProfile = () => {
-    localStorage.setItem("profileFullName", fullName);
-    localStorage.setItem("profilePhone", phone);
+    // update localStorage user so navbar updates
+    const updatedUser = { ...user, full_name: fullName, phone: phone };
+    localStorage.setItem("user", JSON.stringify(updatedUser));
     window.dispatchEvent(new Event("profileUpdated"));
   };
 
@@ -30,9 +66,7 @@ function Profile() {
       {/* HEADER */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 pt-10">
         <h1 className="text-4xl font-bold text-[#123524]">My Profile</h1>
-        <p className="text-[#3c6a5c] mt-1">
-          Manage your account and properties
-        </p>
+        <p className="text-[#3c6a5c] mt-1">Manage your account and properties</p>
       </div>
 
       {/* ACCOUNT DETAILS CARD */}
@@ -97,7 +131,9 @@ function Profile() {
           </p>
         </div>
 
-        {count === 0 ? (
+        {loadingProps ? (
+          <div className="mt-6 text-center text-[#3c6a5c]">Loading...</div>
+        ) : count === 0 ? (
           <div className="bg-white rounded-3xl p-14 shadow-md border border-[#e3e3e3] mt-6 text-center">
             <Home size={42} className="text-[#3c6a5c] mx-auto mb-4" />
 

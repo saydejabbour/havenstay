@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Toast from "../components/Toast";
+import api from "../api/api";
 
 function SignUp({ onSignup }) {
   const navigate = useNavigate();
@@ -10,62 +11,67 @@ function SignUp({ onSignup }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // toast state
   const [toast, setToast] = useState(null);
   const showToast = (variant, message, title) => {
     setToast({ variant, message, title });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setToast(null);
 
-    if (!fullName) {
-      showToast("error", "Please enter your full name.");
-      return;
-    }
-    if (!email) {
-      showToast("error", "Please enter your email address.");
-      return;
-    }
-    if (!email.includes("@")) {
-      showToast("error", "Please enter a valid email address.");
-      return;
-    }
-    if (!password || !confirm) {
-      showToast("error", "Please fill in both password fields.");
-      return;
-    }
-    if (password.length < 6) {
-      showToast("error", "Password should be at least 6 characters long.");
-      return;
-    }
+    // ✅ frontend ONLY blocks obvious mismatch
     if (password !== confirm) {
-      showToast("error", "Passwords do not match.");
+      showToast("error", "Passwords do not match", "Signup failed");
       return;
     }
 
-    // success
-    onSignup(fullName); // sets username in App + localStorage
-    showToast(
-      "success",
-      "Your HavenStay account has been created successfully.",
-      "Account created"
-    );
+    try {
+      setLoading(true);
 
-    setTimeout(() => {
-      navigate("/");
-    }, 700);
+      const res = await api.post("/auth/signup", {
+        full_name: fullName.trim(),
+        email: email.trim(),
+        password,
+      });
+
+      // ✅ backend success message
+      showToast("success", res.data.message, "Account created");
+
+      // save auth data
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      if (onSignup) {
+        onSignup(res.data.user);
+      }
+
+      setTimeout(() => {
+        navigate("/");
+      }, 700);
+    } catch (err) {
+      // ✅ backend error message (email exists, missing fields, etc.)
+      const msg =
+        err.response?.data?.message ||
+        "Unable to create account. Please try again.";
+
+      showToast("error", msg, "Signup failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center px-4">
-         <Link
-  to="/"
-  className="absolute top-6 left-6 flex items-center gap-2 text-emerald-900 hover:underline text-sm font-medium"
->
-  ← Back to home
-</Link>
+      <Link
+        to="/"
+        className="absolute top-6 left-6 flex items-center gap-2 text-emerald-900 hover:underline text-sm font-medium"
+      >
+        ← Back to home
+      </Link>
+
       <div className="w-full max-w-md bg-white rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.08)] p-8">
         <h1 className="text-3xl font-semibold text-emerald-900 mb-2">
           Sign Up
@@ -81,12 +87,11 @@ function SignUp({ onSignup }) {
             </label>
             <input
               type="text"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
+              className="w-full rounded-lg border text-slate-600 bg-[#f8f0e2] px-3 py-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="Full Name"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -96,12 +101,11 @@ function SignUp({ onSignup }) {
             </label>
             <input
               type="email"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
+              className="w-full rounded-lg border text-slate-600 bg-[#f8f0e2] px-3 py-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -111,12 +115,11 @@ function SignUp({ onSignup }) {
             </label>
             <input
               type="password"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
+              className="w-full rounded-lg border text-slate-600 bg-[#f8f0e2] px-3 py-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
             />
           </div>
 
@@ -126,20 +129,25 @@ function SignUp({ onSignup }) {
             </label>
             <input
               type="password"
-              className="w-full rounded-lg border border-slate-200 bg-[#f8f0e2] px-3 py-2 text-sm
-                         text-emerald-900 placeholder:text-emerald-900/50
+              className="w-full rounded-lg border text-slate-600 bg-[#f8f0e2] px-3 py-2 text-sm
                          focus:outline-none focus:ring-2 focus:ring-emerald-900/70"
-              placeholder="••••••••"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
+              disabled={loading}
             />
           </div>
 
           <button
             type="submit"
-            className="w-full mt-3 rounded-lg bg-emerald-900 text-white py-2.5 text-sm font-medium hover:bg-emerald-800 transition"
+            disabled={loading}
+            className={`w-full mt-3 rounded-lg py-2.5 text-sm font-medium transition
+              ${
+                loading
+                  ? "bg-emerald-900/60 text-white cursor-not-allowed"
+                  : "bg-emerald-900 text-white hover:bg-emerald-800"
+              }`}
           >
-            Sign Up
+            {loading ? "Creating account..." : "Sign Up"}
           </button>
         </form>
 
