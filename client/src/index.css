@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Optional: global background color */
+body {
+  margin: 0;
+  background-color: #f5f0e8; /* matches your contact page design */
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
