@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { User, Phone, Home } from "lucide-react";
 import PropertyCard from "../components/PropertyCard.jsx";
+import { API_BASE_URL } from "../api/url";
+
 
 function Profile() {
   const navigate = useNavigate();
@@ -24,7 +26,7 @@ function Profile() {
     try {
       setLoadingProps(true);
 
-      const res = await fetch("http://localhost:5000/properties/my", {
+      const res = await fetch(`${API_BASE_URL}/properties/my`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

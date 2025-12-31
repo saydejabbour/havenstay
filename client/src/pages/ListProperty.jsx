@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Toast from "../components/Toast";
+import { API_BASE_URL } from "../api/url";
+
 
 const FEATURES = [
   "WiFi",
@@ -60,7 +62,7 @@ function ListProperty() {
       setLoading(true);
 
       // 1) Create property in DB
-      const createRes = await fetch("http://localhost:5000/properties", {
+      const createRes = await fetch(`${API_BASE_URL}/properties`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -105,7 +107,7 @@ function ListProperty() {
       }
 
       const uploadRes = await fetch(
-        `http://localhost:5000/properties/${propertyId}/images`,
+        `${API_BASE_URL}/properties/${propertyId}/images`,
         {
           method: "POST",
           headers: {

@@ -1,7 +1,7 @@
 // src/App.jsx
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import { API_BASE_URL } from "./api/url";
 import Layout from "./components/Layout.jsx";
 
 // Pages
@@ -28,6 +28,8 @@ function App() {
       const stored = localStorage.getItem("user");
       return stored ? JSON.parse(stored) : null;
     } catch (e) {
+        console.log(e);
+
       localStorage.removeItem("user");
       return null;
     }
@@ -63,7 +65,7 @@ function App() {
       if (!token) return;
 
       try {
-        const res = await fetch("http://localhost:5000/auth/me", {
+        const res = await fetch(`${API_BASE_URL}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -83,6 +85,8 @@ function App() {
         setUser(freshUser);
       } catch (err) {
         // If backend is down, do nothing (keep local state)
+          console.log(err);
+
         console.log("Auth verification skipped (backend not reachable).");
       }
     };

@@ -91,7 +91,7 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 /* ----------------------------------------------------
    Images serving
 ---------------------------------------------------- */
-// Frontend can load: http://localhost:5000/uploads/properties/<file>
+
 app.use("/uploads", express.static("uploads"));
 
 /* ----------------------------------------------------

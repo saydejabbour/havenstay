@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { API_BASE_URL } from "../api/url";
+
 
 function Contact() {
   const [showSuccess, setShowSuccess] = useState(false);
@@ -45,7 +47,7 @@ function Contact() {
       setLoading(true);
 
       const token = localStorage.getItem("token"); // optional
-      const res = await fetch("http://localhost:5000/contact", {
+      const res = await fetch(`${API_BASE_URL}/contact`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
