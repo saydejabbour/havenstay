@@ -19,6 +19,8 @@ dist-ssr
 .DS_Store
 .env
 .env.local
+server/.env
+client/.env.local
 *.suo
 *.ntvs*
 *.njsproj
